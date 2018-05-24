@@ -1,1 +1,2 @@
-# WardrobeMan - Udacity Android Development Nanodegree Capstone Project
+### WardrobeMan 
+#### Udacity Android Development Nanodegree Capstone Project
