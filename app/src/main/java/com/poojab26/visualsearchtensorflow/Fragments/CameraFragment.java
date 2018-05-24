@@ -8,12 +8,16 @@ import android.graphics.Camera;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.poojab26.visualsearchtensorflow.Classifier;
+import com.poojab26.visualsearchtensorflow.Model.Product;
 import com.poojab26.visualsearchtensorflow.R;
 import com.poojab26.visualsearchtensorflow.TensorFlowImageClassifier;
 import com.wonderkiln.camerakit.CameraKitError;
@@ -23,6 +27,8 @@ import com.wonderkiln.camerakit.CameraKitImage;
 import com.wonderkiln.camerakit.CameraKitVideo;
 import com.wonderkiln.camerakit.CameraView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -64,6 +70,9 @@ public class CameraFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_camera, container, false);
         cameraView = rootView.findViewById(R.id.cameraView);
         fabCamera = rootView.findViewById(R.id.fabClick);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference productsRef = database.getReference("products");
+
         cameraView.addCameraKitListener(new CameraKitEventListener() {
             @Override
             public void onEvent(CameraKitEvent cameraKitEvent) {
@@ -102,6 +111,21 @@ public class CameraFragment extends Fragment {
                 if(topResultConfidence<0.7) {
                     topResult = "none";
                 }
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+
+                Product product = new Product(topResult, imageEncoded);
+                String prodId = productsRef.push().getKey();
+                productsRef.child(prodId).setValue(product);
+
+                /*TO retrieve images*/
+                /*try {
+                    Bitmap imageBitmap = decodeFromFirebaseBase64(restaurant.getImageUrl());
+                    mRestaurantImageView.setImageBitmap(imageBitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();*/
 
 
 

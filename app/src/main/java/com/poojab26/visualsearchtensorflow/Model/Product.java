@@ -39,4 +39,9 @@ public class Product {
         this.productUrl = productUrl;
     }
 
+    public Product(String productLabel, String productUrl){
+        this.productLabel = productLabel;
+        this.productUrl = productUrl;
+    }
+
 }
