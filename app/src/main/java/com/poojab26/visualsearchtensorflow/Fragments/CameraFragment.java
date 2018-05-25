@@ -1,20 +1,16 @@
 package com.poojab26.visualsearchtensorflow.Fragments;
 
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,8 +31,6 @@ import com.wonderkiln.camerakit.CameraKitVideo;
 import com.wonderkiln.camerakit.CameraView;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -47,6 +41,7 @@ public class CameraFragment extends Fragment {
     /*Firebase variables*/
     DatabaseReference productsRef;
     FirebaseStorage storage;
+    String prodId;
     /**/
 
     private String topResult, secondResult = "all";
@@ -54,6 +49,7 @@ public class CameraFragment extends Fragment {
 
     private CameraView cameraView;
     private FloatingActionButton fabCamera;
+    ProgressBar progressBar;
 
 
     /*Tensorflow Variables*/
@@ -88,6 +84,7 @@ public class CameraFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_camera, container, false);
         cameraView = rootView.findViewById(R.id.cameraView);
         fabCamera = rootView.findViewById(R.id.fabClick);
+        progressBar = rootView.findViewById(R.id.progressCamera);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         productsRef = database.getReference("products");
@@ -98,7 +95,15 @@ public class CameraFragment extends Fragment {
         StorageReference storageRef = storage.getReference();
         final StorageReference imageRef = storageRef.child("items/"+prodId+".jpg");
 
-
+        fabCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cameraView.start();
+                cameraView.captureImage();
+                progressBar.setVisibility(View.VISIBLE);
+            }
+        });
+        initTensorFlowAndLoadModel(rootView);
 
         cameraView.addCameraKitListener(new CameraKitEventListener() {
             @Override
@@ -116,29 +121,8 @@ public class CameraFragment extends Fragment {
 
                 cameraBitmap = cameraKitImage.getBitmap();
                 cameraBitmap = Bitmap.createScaledBitmap(cameraBitmap, INPUT_SIZE, INPUT_SIZE, false);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                cameraBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] data = baos.toByteArray();
-                UploadTask uploadTask = imageRef.putBytes(data);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        Uri uri = taskSnapshot.getDownloadUrl();
-                        setup(uri, prodId);
-
-                    }
-                });
-
-
-
-
-
+                cameraView.stop();
+                sendToDatabase(cameraBitmap, imageRef);
             }
 
             @Override
@@ -147,60 +131,69 @@ public class CameraFragment extends Fragment {
             }
         });
 
-        fabCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cameraView.captureImage();
-            }
-        });
-
-        initTensorFlowAndLoadModel(rootView);
 
         return rootView;
     }
 
-    public void setup(Uri uri, String prodId) {
+    private void sendToDatabase(Bitmap cameraBitmap, StorageReference imageRef) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        cameraBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = imageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                Uri uri = taskSnapshot.getDownloadUrl();
+                topResult = getClassifierResult();
+                cameraView.stop();
+                callFragment(topResult, uri, prodId);
+
+            }
+        });
+
+    }
+
+    public String getClassifierResult() {
         final List<Classifier.Recognition> results = classifier.recognizeImage(cameraBitmap);
 
-        topResult = results.get(0).getTitle();
-        topResultConfidence = results.get(0).getConfidence();
-        Log.d("LOL first", topResult + topResultConfidence);
-
-        int size = results.size()-1;
-        if(size>=1) {
-            secondResult = results.get(1).getTitle();
-            secondResultConfidence = results.get(1).getConfidence();
-
-            if(secondResultConfidence<0.5) {
-                secondResult = "all";
-            }
-        }
-
+        return results.get(0).getTitle();
+        /*topResultConfidence = results.get(0).getConfidence();
+        //ASK USER IF RESULT IS ACCURATE?
         if(topResultConfidence<0.7) {
             topResult = "none";
-        }
+        }*/
 
+    }
 
+    private void callFragment(String topResult, Uri uri, String prodId) {
 
-        Product product = new Product(topResult, uri.toString());
+        /*Product product = new Product(topResult, uri.toString());
         productsRef.child(prodId).setValue(product);
 
         getActivity().getSupportFragmentManager().beginTransaction().remove(CameraFragment.this).commit();
 
         ProductListFragment productListFragment = new ProductListFragment();
-        productListFragment.setTopResult(topResult);
-        productListFragment.setSecondResult(secondResult);
         productListFragment.setProductReference(productsRef);
-        productListFragment.setFromCamera(true);
-        if(topResult.equalsIgnoreCase("none")) {
-            productListFragment.setSimilarItems(false);
-        }
-        else
-            productListFragment.setSimilarItems(true);
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.activity_main, productListFragment, null)
                 .commit();
 
+
+*/
+
+        AddItemFragment addItemFragment = new AddItemFragment();
+        addItemFragment.setTopResult(topResult);
+        addItemFragment.setBitmap(cameraBitmap);
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_main, addItemFragment, null)
+                .commit();
+        progressBar.setVisibility(View.GONE);
 
     }
 
@@ -250,6 +243,7 @@ public class CameraFragment extends Fragment {
                 }
             }
         });
+        cameraView.setVisibility(View.VISIBLE);
     }
 
 
