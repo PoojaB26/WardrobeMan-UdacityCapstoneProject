@@ -10,7 +10,6 @@ import android.view.View;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.poojab26.visualsearchtensorflow.Fragments.ProductListFragment;
-import com.poojab26.visualsearchtensorflow.Fragments.ProductListFragmentTest;
 
 public class MainActivity extends AppCompatActivity {
 
