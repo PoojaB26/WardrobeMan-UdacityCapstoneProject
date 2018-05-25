@@ -1,5 +1,6 @@
 package com.poojab26.visualsearchtensorflow.Adapters;
 
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -64,6 +65,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         }
 
         public void bind(final int position) {
+            /*try {
+                Bitmap imageBitmap = decodeFromFirebaseBase64(restaurant.getImageUrl());
+                mRestaurantImageView.setImageBitmap(imageBitmap);
+            } catch (IOException e) {
+                e.printStackTrace();*/
+
                 String imgPath = productList.get(position).getProductUrl();
                 if (!TextUtils.isEmpty(imgPath)) {
                     Picasso.with(itemView.getContext())
