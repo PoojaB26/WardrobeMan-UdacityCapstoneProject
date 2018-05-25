@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.poojab26.visualsearchtensorflow.Adapters.ProductAdapter;
 import com.poojab26.visualsearchtensorflow.Interface.RetrofitInterface;
@@ -35,34 +36,28 @@ import retrofit2.Response;
 
 public class ProductListFragment extends Fragment {
 
-    RecyclerView.LayoutManager topLayoutManager, secondLayoutManager;
-    RecyclerView rvTopProducts, rvSecondProducts;
-    TextView tvProductCategory, tvSecondCategory;
-    String topResult = null, secondResult = null;
-    DatabaseReference productReference = null;
-    Boolean mFromCamera = false;
+    RecyclerView.LayoutManager prodLayoutManager;
+    RecyclerView rvItemsList;
+
     FloatingActionButton fabButtonOpenCamera;
-    final ArrayList<Product> products1 = new ArrayList<Product>();
+    final ArrayList<Product> itemsList = new ArrayList<Product>();
+
+    DatabaseReference productsRef;
 
     public ProductListFragment() {
         // Required empty public constructor
     }
 
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_product_list, container, false);
-        rvTopProducts = rootView.findViewById(R.id.rvProducts);
-        rvSecondProducts = rootView.findViewById(R.id.rvSecondProducts);
-
-        tvProductCategory = rootView.findViewById(R.id.tvProductCategory);
-        tvSecondCategory = rootView.findViewById(R.id.tvSecondCategory);
-        tvProductCategory.setText("View similar products");
-        tvSecondCategory.setText("You can also view");
-
+        rvItemsList = rootView.findViewById(R.id.rvProducts);
 
         fabButtonOpenCamera = rootView.findViewById(R.id.btnDetectObject);
         fabButtonOpenCamera.setVisibility(View.VISIBLE);
@@ -79,23 +74,21 @@ public class ProductListFragment extends Fragment {
             }
         });
         setupRecyclerView();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        productsRef = database.getReference("products");
+
         loadProductImage();
         return rootView;
     }
 
     private void setupRecyclerView() {
-        topLayoutManager = new GridLayoutManager(getActivity(), 2);
-        secondLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
-        rvTopProducts.setLayoutManager(topLayoutManager);
-        rvSecondProducts.setLayoutManager(secondLayoutManager);
-
-        //  rvTopProducts.setAdapter(new ProductAdapter(products1, false));
-
+        prodLayoutManager = new GridLayoutManager(getActivity(), 2);
+        rvItemsList.setLayoutManager(prodLayoutManager);
     }
 
     private void loadProductImage() {
 
-        ValueEventListener topicListener = new ValueEventListener() {
+        ValueEventListener productDataListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -104,12 +97,11 @@ public class ProductListFragment extends Fragment {
 
                     HashMap map = (HashMap) childSnapshot.getValue();
                     if (map != null) {
-                        products1.add(product);
+                        itemsList.add(product);
                     }
                 }
 
-                rvTopProducts.setAdapter(new ProductAdapter(products1, false));
-
+                rvItemsList.setAdapter(new ProductAdapter(itemsList));
             }
 
             @Override
@@ -118,14 +110,8 @@ public class ProductListFragment extends Fragment {
                 databaseError.toException();
             }
         };
-        productReference.addValueEventListener(topicListener);
+        productsRef.addValueEventListener(productDataListener);
     }
-
-    private void loadSecondResultsImage(final String secondResultArg) {
-
-
-    }
-
 
     @Override
     public void onResume() {
@@ -138,24 +124,4 @@ public class ProductListFragment extends Fragment {
     }
 
 
-   /* public void setTopResult(String result) {
-        topResult = result;
-        loadProductImage();
-    }
-
-    public void setSecondResult(String result) {
-        secondResult = result;
-        loadSecondResultsImage(secondResult);
-    }*/
-
-
-    public void setFromCamera(boolean fromCamera) {
-        mFromCamera = fromCamera;
-    }
-
-
-    public void setProductReference(DatabaseReference productReference) {
-        this.productReference = productReference;
-        //   loadProductImage();
-    }
 }

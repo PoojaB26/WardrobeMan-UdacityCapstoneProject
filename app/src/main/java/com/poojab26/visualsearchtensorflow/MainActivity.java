@@ -28,10 +28,6 @@ public class MainActivity extends AppCompatActivity {
         productsRef = database.getReference("products");
 
         ProductListFragment productListFragment = new ProductListFragment();
-       // productListFragmentTest.setTopResult("all");
-        productListFragment.setProductReference(productsRef);
-        productListFragment.setFromCamera(true);
-
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.activity_main, productListFragment)
                 .commit();

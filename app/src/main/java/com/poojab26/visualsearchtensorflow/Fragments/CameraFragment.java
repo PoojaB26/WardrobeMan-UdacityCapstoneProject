@@ -12,13 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.poojab26.visualsearchtensorflow.Classifier;
 import com.poojab26.visualsearchtensorflow.Const;
 import com.poojab26.visualsearchtensorflow.R;
@@ -30,7 +25,6 @@ import com.wonderkiln.camerakit.CameraKitImage;
 import com.wonderkiln.camerakit.CameraKitVideo;
 import com.wonderkiln.camerakit.CameraView;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -38,14 +32,7 @@ import java.util.concurrent.Executors;
 
 public class CameraFragment extends Fragment {
 
-    /*Firebase variables*/
-    DatabaseReference productsRef;
-    FirebaseStorage storage;
-    String prodId;
-    /**/
-
-    private String topResult, secondResult = "all";
-    private Float topResultConfidence, secondResultConfidence;
+    private String topResult;
 
     private CameraView cameraView;
     private FloatingActionButton fabCamera;
@@ -86,15 +73,6 @@ public class CameraFragment extends Fragment {
         fabCamera = rootView.findViewById(R.id.fabClick);
         progressBar = rootView.findViewById(R.id.progressCamera);
 
-        /*FirebaseDatabase database = FirebaseDatabase.getInstance();
-        productsRef = database.getReference("products");
-        final String prodId = productsRef.push().getKey();
-
-
-        storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        final StorageReference imageRef = storageRef.child("items/"+prodId+".jpg");*/
-
         fabCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,9 +101,7 @@ public class CameraFragment extends Fragment {
                 cameraBitmap = Bitmap.createScaledBitmap(cameraBitmap, INPUT_SIZE, INPUT_SIZE, false);
                 cameraView.stop();
                 topResult = getClassifierResult();
-                /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                cameraBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                final byte[] cameraByteArray = baos.toByteArray();*/
+
                 Bundle bundle = new Bundle();
                 bundle.putString(Const.Label, topResult);
                 bundle.putParcelable(Const.CameraBitmap, cameraBitmap);
@@ -152,69 +128,6 @@ public class CameraFragment extends Fragment {
         final List<Classifier.Recognition> results = classifier.recognizeImage(cameraBitmap);
         return results.get(0).getTitle();
     }
-    /*
-    private void sendToDatabase(Bitmap cameraBitmap, StorageReference imageRef) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        cameraBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        final byte[] cameraByteArray = baos.toByteArray();
-        UploadTask uploadTask = imageRef.putBytes(cameraByteArray);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-
-                Uri uri = taskSnapshot.getDownloadUrl();
-                topResult = getClassifierResult();
-                cameraView.stop();
-
-                Bundle bundle = new Bundle();
-                bundle.putString(Const.Label, topResult);
-                bundle.putByteArray(Const.CameraBitmap, cameraByteArray);
-                bundle.putString(Const.DownloadUrl, uri.toString());
-                bundle.putString(Const.ProductReference, productsRef.toString());
-
-                callFragment(topResult, uri, prodId);
-
-
-            }
-        });
-
-    }
-
-
-
-    private void callFragment(String topResult, Uri uri, String prodId) {
-
-        *//*Product product = new Product(topResult, uri.toString());
-        productsRef.child(prodId).setValue(product);
-
-        getActivity().getSupportFragmentManager().beginTransaction().remove(CameraFragment.this).commit();
-
-        ProductListFragment productListFragment = new ProductListFragment();
-        productListFragment.setProductReference(productsRef);
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_main, productListFragment, null)
-                .commit();
-
-
-*//*
-
-        AddItemFragment addItemFragment = new AddItemFragment();
-        addItemFragment.setTopResult(topResult);
-        addItemFragment.setBitmap(cameraBitmap);
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_main, addItemFragment, null)
-                .commit();
-        progressBar.setVisibility(View.GONE);
-
-
-
-    }*/
 
     @Override
     public void onResume() {

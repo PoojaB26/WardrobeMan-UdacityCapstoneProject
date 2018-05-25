@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,24 +15,31 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.poojab26.visualsearchtensorflow.Const;
 import com.poojab26.visualsearchtensorflow.Model.Product;
 import com.poojab26.visualsearchtensorflow.R;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+
 public class AddItemFragment extends Fragment {
     Bitmap bitmapFromCamera;
-    byte[] cameraByteArray;
     String label, mDownloadURL;
 
-    Button mYesButton, mNoButton;
+    Button btnYes, btnNo;
     ImageView imgCamera;
     TextView tvAskUser;
 
     DatabaseReference productsRef;
-
+    StorageReference imageRef;
+    String prodId;
     public AddItemFragment() {
         // Required empty public constructor
     }
@@ -44,6 +52,13 @@ public class AddItemFragment extends Fragment {
             label = bundle.getString(Const.Label, "");
             bitmapFromCamera = bundle.getParcelable(Const.CameraBitmap);
         }
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        productsRef = database.getReference("products");
+        prodId = productsRef.push().getKey();
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        imageRef = storageRef.child("items/"+prodId+".jpg");
 
     }
 
@@ -58,43 +73,51 @@ public class AddItemFragment extends Fragment {
         productsRef = database.getReference("products");
 
         imgCamera.setImageBitmap(bitmapFromCamera);
-        tvAskUser.setText("Is this " + label);
+        tvAskUser.setText("Is this " + label + "?");
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickYesButton();
+
+            }
+        });
 
         return rootView;
     }
 
     private void setupUI(View rootview) {
         tvAskUser = rootview.findViewById(R.id.tvAskUser);
-        mYesButton = rootview.findViewById(R.id.btnYes);
-        mNoButton = rootview.findViewById(R.id.btnNo);
+        btnYes = rootview.findViewById(R.id.btnYes);
+        btnNo = rootview.findViewById(R.id.btnNo);
         imgCamera = rootview.findViewById(R.id.imgCamera);
     }
 
+    public void onClickYesButton(){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmapFromCamera.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        final byte[] cameraByteArray = baos.toByteArray();
+        UploadTask uploadTask = imageRef.putBytes(cameraByteArray);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
 
-    public void setBitmap(Bitmap bitmap) {
-        bitmapFromCamera = bitmap;
-    }
+                Uri uri = taskSnapshot.getDownloadUrl();
+                Product product = new Product(label, uri.toString());
+                productsRef.child(prodId).setValue(product);
+                ProductListFragment productListFragment = new ProductListFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.activity_main, productListFragment, null)
+                        .commit();
 
-    public void setTopResult(String result) {
-        label = result;
-    }
-
-    public void setDownloadURL(String URL) {
-        mDownloadURL = URL;
-    }
-
-    public void onClickYesButton(View view){
-       /* Product product = new Product(label, mDownloadURL);
-        productsRef.child(prodId).setValue(product);
-
-        getActivity().getSupportFragmentManager().beginTransaction().remove(CameraFragment.this).commit();
-
-        ProductListFragment productListFragment = new ProductListFragment();
-        productListFragment.setProductReference(productsRef);
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_main, productListFragment, null)
-                .commit();*/
+            }
+        });
     }
 
 }

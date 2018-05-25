@@ -21,25 +21,17 @@ import java.util.List;
  */
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
-    public ProductAdapter(ArrayList<Product> products, Boolean result) {
+    public ProductAdapter(ArrayList<Product> products) {
         productList = products;
-        secondResult = result;
     }
 
     private final ArrayList<Product> productList;
-    private final Boolean secondResult;
 
 
     @Override
     public ProductAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
-        if(!secondResult){
-            view = LayoutInflater.from(parent.getContext())
+        View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.product_item_list, parent, false);
-        }else{
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.second_product_item_list, parent, false);
-        }
         return new ViewHolder(view);
     }
 
@@ -65,12 +57,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         }
 
         public void bind(final int position) {
-            /*try {
-                Bitmap imageBitmap = decodeFromFirebaseBase64(restaurant.getImageUrl());
-                mRestaurantImageView.setImageBitmap(imageBitmap);
-            } catch (IOException e) {
-                e.printStackTrace();*/
-
                 String imgPath = productList.get(position).getProductUrl();
                 if (!TextUtils.isEmpty(imgPath)) {
                     Picasso.with(itemView.getContext())

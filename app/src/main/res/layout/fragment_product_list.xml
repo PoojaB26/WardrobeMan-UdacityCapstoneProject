@@ -19,15 +19,6 @@
            android:layout_height="wrap_content"
            android:orientation="vertical">
 
-           <TextView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               tools:text="Showing similar items"
-               android:id="@+id/tvProductCategory"
-               android:layout_gravity="start"
-               android:textColor="#000"
-               android:paddingStart="12dp"
-               android:paddingEnd="12dp"/>
 
            <android.support.v7.widget.RecyclerView
 
@@ -39,31 +30,6 @@
                android:layout_marginTop="32dp"
                app:layoutManager="LinearLayoutManager"
                tools:listitem="@layout/product_item_list" />
-
-           <TextView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               tools:text="You can also view"
-
-               android:id="@+id/tvSecondCategory"
-               android:layout_gravity="start"
-               android:textColor="#000"
-               android:paddingStart="12dp"
-               android:paddingEnd="12dp"/>
-
-           <android.support.v7.widget.RecyclerView
-
-               android:id="@+id/rvSecondProducts"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_marginLeft="16dp"
-               android:layout_marginRight="16dp"
-               android:layout_marginTop="32dp"
-               android:orientation="horizontal"
-               app:reverseLayout="true"
-               app:layoutManager="LinearLayoutManager"
-               tools:listitem="@layout/second_product_item_list" />
-
 
 
        </LinearLayout>
