@@ -25,11 +25,8 @@ import com.poojab26.visualsearchtensorflow.Model.Products;
 import com.poojab26.visualsearchtensorflow.R;
 import com.poojab26.visualsearchtensorflow.Utils.APIClient;
 
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,13 +37,12 @@ public class ProductListFragment extends Fragment {
 
     RecyclerView.LayoutManager topLayoutManager, secondLayoutManager;
     RecyclerView rvTopProducts, rvSecondProducts;
-    public RetrofitInterface retrofitInterface;
     TextView tvProductCategory, tvSecondCategory;
-    String topResult = null, secondResult=null;
+    String topResult = null, secondResult = null;
     DatabaseReference productReference = null;
-    Boolean mSimilarItems = false;
     Boolean mFromCamera = false;
     FloatingActionButton fabButtonOpenCamera;
+    final ArrayList<Product> products1 = new ArrayList<Product>();
 
     public ProductListFragment() {
         // Required empty public constructor
@@ -64,12 +60,10 @@ public class ProductListFragment extends Fragment {
 
         tvProductCategory = rootView.findViewById(R.id.tvProductCategory);
         tvSecondCategory = rootView.findViewById(R.id.tvSecondCategory);
-        if(mSimilarItems){
-            tvProductCategory.setText("View similar products");
-            tvSecondCategory.setText("You can also view");
-          //  if(!secondResult.equalsIgnoreCase("all"))
+        tvProductCategory.setText("View similar products");
+        tvSecondCategory.setText("You can also view");
 
-        }
+
         fabButtonOpenCamera = rootView.findViewById(R.id.btnDetectObject);
         fabButtonOpenCamera.setVisibility(View.VISIBLE);
 
@@ -85,6 +79,7 @@ public class ProductListFragment extends Fragment {
             }
         });
         setupRecyclerView();
+        loadProductImage();
         return rootView;
     }
 
@@ -93,115 +88,42 @@ public class ProductListFragment extends Fragment {
         secondLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         rvTopProducts.setLayoutManager(topLayoutManager);
         rvSecondProducts.setLayoutManager(secondLayoutManager);
+
+        //  rvTopProducts.setAdapter(new ProductAdapter(products1, false));
+
     }
 
-    private void loadProductImage(final String topResultArg) {
+    private void loadProductImage() {
 
-        retrofitInterface = APIClient.getClient().create(RetrofitInterface.class);
-
-        Call<Products> call = retrofitInterface.getProductList();
-        call.enqueue(new Callback<Products>() {
+        ValueEventListener topicListener = new ValueEventListener() {
             @Override
-            public void onResponse(Call<Products> call, Response<Products> response) {
-                Products products = response.body();
-                ArrayList<Product> customProducts;
-                customProducts = new ArrayList();
-                for(int i=0; i<products.getProducts().size(); i++){
-                    if (topResultArg.equalsIgnoreCase("all")){
-                        customProducts = products.getProducts();
-                        break;
-                    }
-                    else if(products.getProducts().get(i).getProductLabel().equalsIgnoreCase(topResultArg))
-                    {
-                        customProducts.add(products.getProducts().get(i));
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    Product product = childSnapshot.getValue(Product.class);
+
+                    HashMap map = (HashMap) childSnapshot.getValue();
+                    if (map != null) {
+                        products1.add(product);
                     }
                 }
 
-                if(mFromCamera) {
-                    ValueEventListener topicListener = new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            ArrayList<Product> products1 = new ArrayList<Product>();
+                rvTopProducts.setAdapter(new ProductAdapter(products1, false));
 
-                            for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                                Product product = childSnapshot.getValue(Product.class);
-
-                                HashMap map = (HashMap) childSnapshot.getValue();
-                                if (map != null) {
-                                    products1.add(product);
-                                }
-                                //or
-                                // String name = (String) childSnapshot.child("storytext").getValue();
-
-
-                            }
-
-                            String label = products1.get(0).getProductLabel();
-
-
-                        /*// Get Post object and use the values to update the UI
-                        for (DataSnapshot productSnapshot: dataSnapshot.getChildren()) {
-                            Product product = productSnapshot.getValue(Product.class);
-                            Log.d("Get Data", product.getProductLabel());
-                            products1.setProducts();
-
-                        }*/
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            // Getting Post failed, log a message
-                            databaseError.toException();
-                            // ...
-                        }
-                    };
-                    productReference.addValueEventListener(topicListener);
-
-                }
-
-                if(topResultArg.equalsIgnoreCase("none")){
-                    Toast.makeText(getContext() ,"No similar items available!", Toast.LENGTH_SHORT).show();
-                    rvTopProducts.setAdapter(new ProductAdapter(products.getProducts(), false));
-
-                }else{
-                    rvTopProducts.setAdapter(new ProductAdapter(customProducts, false));
-                }
             }
 
             @Override
-            public void onFailure(Call<Products> call, Throwable t) {
-                Log.d("Error", t.getMessage());
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                databaseError.toException();
             }
-        });
+        };
+        productReference.addValueEventListener(topicListener);
     }
+
     private void loadSecondResultsImage(final String secondResultArg) {
 
-        retrofitInterface = APIClient.getClient().create(RetrofitInterface.class);
 
-        Call<Products> call = retrofitInterface.getProductList();
-        call.enqueue(new Callback<Products>() {
-            @Override
-            public void onResponse(Call<Products> call, Response<Products> response) {
-                Products products = response.body();
-                ArrayList<Product> customProducts;
-                customProducts = new ArrayList();
-                for(int i=0; i<products.getProducts().size(); i++){
-                    if(products.getProducts().get(i).getProductLabel().equalsIgnoreCase(secondResultArg)){
-                        customProducts.add(products.getProducts().get(i));
-                    }
-                }
-                if(!secondResultArg.equalsIgnoreCase("all"))
-                    rvSecondProducts.setAdapter(new ProductAdapter(customProducts, true));
-                else
-                    rvSecondProducts.setAdapter(new ProductAdapter(products.getProducts(), true));
-
-            }
-
-            @Override
-            public void onFailure(Call<Products> call, Throwable t) {
-                Log.d("Error", t.getMessage());
-            }
-        });
     }
 
 
@@ -216,19 +138,16 @@ public class ProductListFragment extends Fragment {
     }
 
 
-    public void setTopResult(String result) {
+   /* public void setTopResult(String result) {
         topResult = result;
-        loadProductImage(topResult);
+        loadProductImage();
     }
 
     public void setSecondResult(String result) {
         secondResult = result;
         loadSecondResultsImage(secondResult);
-    }
+    }*/
 
-    public void setSimilarItems(boolean similarItems) {
-        mSimilarItems = similarItems;
-    }
 
     public void setFromCamera(boolean fromCamera) {
         mFromCamera = fromCamera;
@@ -237,5 +156,6 @@ public class ProductListFragment extends Fragment {
 
     public void setProductReference(DatabaseReference productReference) {
         this.productReference = productReference;
+        //   loadProductImage();
     }
 }

@@ -7,11 +7,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.poojab26.visualsearchtensorflow.Fragments.ProductListFragment;
+import com.poojab26.visualsearchtensorflow.Fragments.ProductListFragmentTest;
 
 public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
+    DatabaseReference productsRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +25,13 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(getTitle());
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        productsRef = database.getReference("products");
+
         ProductListFragment productListFragment = new ProductListFragment();
-        productListFragment.setTopResult("all");
+       // productListFragmentTest.setTopResult("all");
+        productListFragment.setProductReference(productsRef);
+        productListFragment.setFromCamera(true);
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.activity_main, productListFragment)
