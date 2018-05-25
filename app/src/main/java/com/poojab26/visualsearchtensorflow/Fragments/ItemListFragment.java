@@ -6,45 +6,34 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.poojab26.visualsearchtensorflow.Adapters.ProductAdapter;
-import com.poojab26.visualsearchtensorflow.Interface.RetrofitInterface;
-import com.poojab26.visualsearchtensorflow.Model.Product;
-import com.poojab26.visualsearchtensorflow.Model.Products;
+import com.poojab26.visualsearchtensorflow.Adapters.ItemsAdapter;
+import com.poojab26.visualsearchtensorflow.Model.Item;
 import com.poojab26.visualsearchtensorflow.R;
-import com.poojab26.visualsearchtensorflow.Utils.APIClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-
-public class ProductListFragment extends Fragment {
+public class ItemListFragment extends Fragment {
 
     RecyclerView.LayoutManager prodLayoutManager;
     RecyclerView rvItemsList;
 
     FloatingActionButton fabButtonOpenCamera;
-    final ArrayList<Product> itemsList = new ArrayList<Product>();
+    final ArrayList<Item> itemsList = new ArrayList<Item>();
 
     DatabaseReference productsRef;
 
-    public ProductListFragment() {
+    public ItemListFragment() {
         // Required empty public constructor
     }
 
@@ -75,7 +64,7 @@ public class ProductListFragment extends Fragment {
         });
         setupRecyclerView();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        productsRef = database.getReference("products");
+        productsRef = database.getReference("items");
 
         loadProductImage();
         return rootView;
@@ -93,15 +82,15 @@ public class ProductListFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                    Product product = childSnapshot.getValue(Product.class);
+                    Item item = childSnapshot.getValue(Item.class);
 
                     HashMap map = (HashMap) childSnapshot.getValue();
                     if (map != null) {
-                        itemsList.add(product);
+                        itemsList.add(item);
                     }
                 }
 
-                rvItemsList.setAdapter(new ProductAdapter(itemsList));
+                rvItemsList.setAdapter(new ItemsAdapter(itemsList));
             }
 
             @Override

@@ -1,13 +1,10 @@
 package com.poojab26.visualsearchtensorflow.Fragments;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,15 +20,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.poojab26.visualsearchtensorflow.Const;
-import com.poojab26.visualsearchtensorflow.Model.Product;
+import com.poojab26.visualsearchtensorflow.Model.Item;
 import com.poojab26.visualsearchtensorflow.R;
-import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 
 public class AddItemFragment extends Fragment {
     Bitmap bitmapFromCamera;
-    String label, mDownloadURL;
+    String label;
 
     Button btnYes, btnNo;
     ImageView imgCamera;
@@ -54,7 +50,7 @@ public class AddItemFragment extends Fragment {
         }
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        productsRef = database.getReference("products");
+        productsRef = database.getReference("items");
         prodId = productsRef.push().getKey();
 
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -70,7 +66,7 @@ public class AddItemFragment extends Fragment {
         setupUI(rootView);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        productsRef = database.getReference("products");
+        productsRef = database.getReference("items");
 
         imgCamera.setImageBitmap(bitmapFromCamera);
         tvAskUser.setText("Is this " + label + "?");
@@ -109,11 +105,11 @@ public class AddItemFragment extends Fragment {
 
 
                 Uri uri = taskSnapshot.getDownloadUrl();
-                Product product = new Product(label, uri.toString());
-                productsRef.child(prodId).setValue(product);
-                ProductListFragment productListFragment = new ProductListFragment();
+                Item item = new Item(label, uri.toString());
+                productsRef.child(prodId).setValue(item);
+                ItemListFragment itemListFragment = new ItemListFragment();
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.activity_main, productListFragment, null)
+                        .replace(R.id.activity_main, itemListFragment, null)
                         .commit();
 
             }

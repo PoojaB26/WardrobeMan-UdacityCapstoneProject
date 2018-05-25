@@ -1,9 +1,6 @@
 package com.poojab26.visualsearchtensorflow.Interface;
 
-import com.poojab26.visualsearchtensorflow.Model.Product;
-import com.poojab26.visualsearchtensorflow.Model.Products;
-
-import java.util.List;
+import com.poojab26.visualsearchtensorflow.Model.Items;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -15,6 +12,6 @@ import retrofit2.http.GET;
 
 public interface RetrofitInterface {
     @GET("raw/c2854a0b65ddf79194b89bdb51a77140d84c3e0f/product.json")
-    Call<Products> getProductList();
+    Call<Items> getProductList();
 
 }

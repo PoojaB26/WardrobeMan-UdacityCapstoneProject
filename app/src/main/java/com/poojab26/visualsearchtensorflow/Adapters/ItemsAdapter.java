@@ -1,42 +1,39 @@
 package com.poojab26.visualsearchtensorflow.Adapters;
 
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.poojab26.visualsearchtensorflow.Model.Product;
+import com.poojab26.visualsearchtensorflow.Model.Item;
 import com.poojab26.visualsearchtensorflow.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by poojab26 on 08-Apr-18.
  */
 
-public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
-    public ProductAdapter(ArrayList<Product> products) {
-        productList = products;
+public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
+    public ItemsAdapter(ArrayList<Item> items) {
+        itemList = items;
     }
 
-    private final ArrayList<Product> productList;
+    private final ArrayList<Item> itemList;
 
 
     @Override
-    public ProductAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ItemsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.product_item_list, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ProductAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ItemsAdapter.ViewHolder holder, int position) {
 
             holder.bind(position);
 
@@ -44,7 +41,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return productList.size();
+        return itemList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -57,7 +54,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         }
 
         public void bind(final int position) {
-                String imgPath = productList.get(position).getProductUrl();
+                String imgPath = itemList.get(position).getItemDownloadUrl();
                 if (!TextUtils.isEmpty(imgPath)) {
                     Picasso.with(itemView.getContext())
                             .load(imgPath)

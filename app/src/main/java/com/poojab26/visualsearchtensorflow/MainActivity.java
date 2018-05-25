@@ -4,12 +4,11 @@ package com.poojab26.visualsearchtensorflow;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.poojab26.visualsearchtensorflow.Fragments.ProductListFragment;
+import com.poojab26.visualsearchtensorflow.Fragments.ItemListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,11 +24,11 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        productsRef = database.getReference("products");
+        productsRef = database.getReference("items");
 
-        ProductListFragment productListFragment = new ProductListFragment();
+        ItemListFragment itemListFragment = new ItemListFragment();
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.activity_main, productListFragment)
+                .add(R.id.activity_main, itemListFragment)
                 .commit();
 
     }
