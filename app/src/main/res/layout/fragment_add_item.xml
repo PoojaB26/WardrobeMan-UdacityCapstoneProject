@@ -55,7 +55,8 @@
             android:layout_weight="1"
             android:background="@color/colorAccent"
             android:textColor="#fff"
-            android:text="NOT REALLY"/>
+            android:text="NOT REALLY"
+            android:onClick="onClickYesButton"/>
     </LinearLayout>
 
 </RelativeLayout>
