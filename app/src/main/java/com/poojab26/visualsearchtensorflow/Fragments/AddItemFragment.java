@@ -33,9 +33,9 @@ public class AddItemFragment extends Fragment {
     ImageView imgCamera;
     TextView tvAskUser;
 
-    DatabaseReference productsRef;
+    DatabaseReference itemsRef;
     StorageReference imageRef;
-    String prodId;
+    String itemId;
     public AddItemFragment() {
         // Required empty public constructor
     }
@@ -50,11 +50,11 @@ public class AddItemFragment extends Fragment {
         }
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        productsRef = database.getReference("items");
-        prodId = productsRef.push().getKey();
+        itemsRef = database.getReference("items");
+        itemId = itemsRef.push().getKey();
 
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        imageRef = storageRef.child("items/"+prodId+".jpg");
+        imageRef = storageRef.child("items/"+ itemId +".jpg");
 
     }
 
@@ -66,7 +66,7 @@ public class AddItemFragment extends Fragment {
         setupUI(rootView);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        productsRef = database.getReference("items");
+        itemsRef = database.getReference("items");
 
         imgCamera.setImageBitmap(bitmapFromCamera);
         tvAskUser.setText("Is this " + label + "?");
@@ -106,7 +106,7 @@ public class AddItemFragment extends Fragment {
 
                 Uri uri = taskSnapshot.getDownloadUrl();
                 Item item = new Item(label, uri.toString());
-                productsRef.child(prodId).setValue(item);
+                itemsRef.child(itemId).setValue(item);
                 ItemListFragment itemListFragment = new ItemListFragment();
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.activity_main, itemListFragment, null)

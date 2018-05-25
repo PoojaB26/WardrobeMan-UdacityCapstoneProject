@@ -13,7 +13,7 @@ import com.poojab26.visualsearchtensorflow.Fragments.ItemListFragment;
 public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-    DatabaseReference productsRef;
+    DatabaseReference itemsRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        productsRef = database.getReference("items");
+        itemsRef = database.getReference("items");
 
         ItemListFragment itemListFragment = new ItemListFragment();
         getSupportFragmentManager().beginTransaction()

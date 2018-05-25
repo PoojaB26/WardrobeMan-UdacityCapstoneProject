@@ -24,23 +24,6 @@ public class Item {
 
 
 
-/*
-    public String getProductLabel() {
-        return itemLabel;
-    }
-
-    public void setProductLabel(String productLabel) {
-        this.itemLabel = productLabel;
-    }
-
-    public String getProductUrl() {
-        return itemDownloadUrl;
-    }
-
-    public void setProductUrl(String productUrl) {
-        this.itemDownloadUrl = productUrl;
-    }*/
-
     public Item(String itemLabel, String itemDownloadUrl){
         this.itemLabel = itemLabel;
         this.itemDownloadUrl = itemDownloadUrl;

@@ -46,11 +46,11 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView ivProductImage;
+        ImageView ivItemImage;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ivProductImage = itemView.findViewById(R.id.ivProductImage);
+            ivItemImage = itemView.findViewById(R.id.ivItemImage);
         }
 
         public void bind(final int position) {
@@ -58,7 +58,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
                 if (!TextUtils.isEmpty(imgPath)) {
                     Picasso.with(itemView.getContext())
                             .load(imgPath)
-                            .into(ivProductImage);
+                            .into(ivItemImage);
 
                 }
         }

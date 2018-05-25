@@ -6,7 +6,7 @@ package com.poojab26.visualsearchtensorflow;
 public class Const {
 
     public static String Label = "label";
-    public static String ProductReference = "productReference";
+    public static String DatabaseItemReference = "itemReference";
     public static String CameraBitmap = "bitmap";
     public static String DownloadUrl = "downloadUrl";
 }

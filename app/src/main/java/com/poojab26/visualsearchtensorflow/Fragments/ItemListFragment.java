@@ -25,13 +25,13 @@ import java.util.HashMap;
 
 public class ItemListFragment extends Fragment {
 
-    RecyclerView.LayoutManager prodLayoutManager;
+    RecyclerView.LayoutManager wardrobeLayoutManager;
     RecyclerView rvItemsList;
 
     FloatingActionButton fabButtonOpenCamera;
     final ArrayList<Item> itemsList = new ArrayList<Item>();
 
-    DatabaseReference productsRef;
+    DatabaseReference itemsRef;
 
     public ItemListFragment() {
         // Required empty public constructor
@@ -46,7 +46,7 @@ public class ItemListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_item_list, container, false);
-        rvItemsList = rootView.findViewById(R.id.rvProducts);
+        rvItemsList = rootView.findViewById(R.id.rvItems);
 
         fabButtonOpenCamera = rootView.findViewById(R.id.btnDetectObject);
         fabButtonOpenCamera.setVisibility(View.VISIBLE);
@@ -64,20 +64,20 @@ public class ItemListFragment extends Fragment {
         });
         setupRecyclerView();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        productsRef = database.getReference("items");
+        itemsRef = database.getReference("items");
 
-        loadProductImage();
+        loadItemsImages();
         return rootView;
     }
 
     private void setupRecyclerView() {
-        prodLayoutManager = new GridLayoutManager(getActivity(), 2);
-        rvItemsList.setLayoutManager(prodLayoutManager);
+        wardrobeLayoutManager = new GridLayoutManager(getActivity(), 2);
+        rvItemsList.setLayoutManager(wardrobeLayoutManager);
     }
 
-    private void loadProductImage() {
+    private void loadItemsImages() {
 
-        ValueEventListener productDataListener = new ValueEventListener() {
+        ValueEventListener itemDataListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -99,7 +99,7 @@ public class ItemListFragment extends Fragment {
                 databaseError.toException();
             }
         };
-        productsRef.addValueEventListener(productDataListener);
+        itemsRef.addValueEventListener(itemDataListener);
     }
 
     @Override
