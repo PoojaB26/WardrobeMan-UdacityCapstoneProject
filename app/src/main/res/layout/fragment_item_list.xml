@@ -29,7 +29,7 @@
                android:layout_marginRight="16dp"
                android:layout_marginTop="32dp"
                app:layoutManager="LinearLayoutManager"
-               tools:listitem="@layout/product_item_list" />
+               tools:listitem="@layout/wardrobe_item_list" />
 
 
        </LinearLayout>

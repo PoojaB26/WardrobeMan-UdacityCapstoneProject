@@ -45,7 +45,7 @@ public class ItemListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_product_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_item_list, container, false);
         rvItemsList = rootView.findViewById(R.id.rvProducts);
 
         fabButtonOpenCamera = rootView.findViewById(R.id.btnDetectObject);
