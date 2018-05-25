@@ -14,6 +14,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.poojab26.visualsearchtensorflow.Adapters.ProductAdapter;
 import com.poojab26.visualsearchtensorflow.Interface.RetrofitInterface;
 import com.poojab26.visualsearchtensorflow.Model.Product;
@@ -24,6 +28,7 @@ import com.poojab26.visualsearchtensorflow.Utils.APIClient;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -38,7 +43,9 @@ public class ProductListFragment extends Fragment {
     public RetrofitInterface retrofitInterface;
     TextView tvProductCategory, tvSecondCategory;
     String topResult = null, secondResult=null;
+    DatabaseReference productReference = null;
     Boolean mSimilarItems = false;
+    Boolean mFromCamera = false;
     FloatingActionButton fabButtonOpenCamera;
 
     public ProductListFragment() {
@@ -109,9 +116,53 @@ public class ProductListFragment extends Fragment {
                         customProducts.add(products.getProducts().get(i));
                     }
                 }
+
+                if(mFromCamera) {
+                    ValueEventListener topicListener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            ArrayList<Product> products1 = new ArrayList<Product>();
+
+                            for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                                Product product = childSnapshot.getValue(Product.class);
+
+                                HashMap map = (HashMap) childSnapshot.getValue();
+                                if (map != null) {
+                                    products1.add(product);
+                                }
+                                //or
+                                // String name = (String) childSnapshot.child("storytext").getValue();
+
+
+                            }
+
+                            String label = products1.get(0).getProductLabel();
+
+
+                        /*// Get Post object and use the values to update the UI
+                        for (DataSnapshot productSnapshot: dataSnapshot.getChildren()) {
+                            Product product = productSnapshot.getValue(Product.class);
+                            Log.d("Get Data", product.getProductLabel());
+                            products1.setProducts();
+
+                        }*/
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // Getting Post failed, log a message
+                            databaseError.toException();
+                            // ...
+                        }
+                    };
+                    productReference.addValueEventListener(topicListener);
+
+                }
+
                 if(topResultArg.equalsIgnoreCase("none")){
                     Toast.makeText(getContext() ,"No similar items available!", Toast.LENGTH_SHORT).show();
                     rvTopProducts.setAdapter(new ProductAdapter(products.getProducts(), false));
+
                 }else{
                     rvTopProducts.setAdapter(new ProductAdapter(customProducts, false));
                 }
@@ -177,5 +228,14 @@ public class ProductListFragment extends Fragment {
 
     public void setSimilarItems(boolean similarItems) {
         mSimilarItems = similarItems;
+    }
+
+    public void setFromCamera(boolean fromCamera) {
+        mFromCamera = fromCamera;
+    }
+
+
+    public void setProductReference(DatabaseReference productReference) {
+        this.productReference = productReference;
     }
 }

@@ -190,6 +190,8 @@ public class CameraFragment extends Fragment {
         ProductListFragment productListFragment = new ProductListFragment();
         productListFragment.setTopResult(topResult);
         productListFragment.setSecondResult(secondResult);
+        productListFragment.setProductReference(productsRef);
+        productListFragment.setFromCamera(true);
         if(topResult.equalsIgnoreCase("none")) {
             productListFragment.setSimilarItems(false);
         }

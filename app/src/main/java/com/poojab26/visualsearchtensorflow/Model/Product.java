@@ -44,4 +44,5 @@ public class Product {
         this.productUrl = productUrl;
     }
 
+    public Product(){}
 }
