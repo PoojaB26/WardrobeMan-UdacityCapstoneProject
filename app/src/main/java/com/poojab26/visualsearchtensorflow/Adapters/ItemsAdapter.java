@@ -60,7 +60,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
 
         public void bind(final int position) {
                 if(position==0){
-                    ViewCompat.setTransitionName(ivItemImage, "cameraImage");
+                    ViewCompat.setTransitionName(ivItemImage, ivItemImage.getTransitionName());
                 }
                 String imgPath = itemList.get(position).getItemDownloadUrl();
                 if (!TextUtils.isEmpty(imgPath)) {

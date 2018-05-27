@@ -2,8 +2,9 @@
     <string name="app_name">VisualSearchTensorFlow</string>
     <string name="detect_object">Detect Object</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="admob_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="tv_askuser">Is this %1$s?</string>
+    <string name="tv_widget_info">You have %1$d items in your wardrobe </string>
     <string-array name="labels_array">
         <item>flipflops</item>
         <item>gown</item>
@@ -20,5 +21,10 @@
     <string name="appwidget_text_click_toupload">Click to upload more</string>
 
     <string name="add_widget">Add widget</string>
+
+    <string name="placeholder_label">This is</string>
+    <string name="button_upload">UPLOAD</string>
+    <string name="button_notreally">NOT REALLY</string>
+    <string name="button_yes">YES</string>
 
 </resources>

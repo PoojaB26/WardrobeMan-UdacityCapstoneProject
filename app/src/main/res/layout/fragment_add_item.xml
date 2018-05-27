@@ -45,7 +45,7 @@
                 android:id="@+id/tvText"
                 android:textSize="18sp"
                 android:textColor="#000"
-                android:text="This is"/>
+                android:text="@string/placeholder_label"/>
 
             <Spinner
                 android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
             android:id="@+id/btnUserUpload"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="20dp"
-            android:text="UPLOAD"
+            android:text="@string/button_upload"
             android:background="@color/colorPrimary"
             android:textColor="#fff"/>
 
@@ -103,7 +103,8 @@
             android:layout_weight="1"
             android:background="@color/colorPrimary"
             android:textColor="#fff"
-            android:text="Yes"/>
+            android:text="@string/button_yes"
+            />
 
         <Button
             android:id="@+id/btnNo"
@@ -113,7 +114,7 @@
             android:layout_weight="1"
             android:background="@color/colorAccent"
             android:textColor="#fff"
-            android:text="NOT REALLY"
+            android:text="@string/button_notreally"
            />
     </LinearLayout>
     </LinearLayout>

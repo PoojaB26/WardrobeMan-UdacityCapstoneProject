@@ -116,8 +116,6 @@ public class ItemListFragment extends Fragment {
                         itemsList.add(item);
                     }
                 }
-                Log.d("act", "ondatachange");
-
 
                 rvItemsList.setAdapter(new ItemsAdapter(itemsList));
                 Const.setCount(itemsList.size());

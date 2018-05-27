@@ -95,7 +95,7 @@ public class AddItemFragment extends Fragment {
         itemsRef = database.getReference("items");
 
         imgCamera.setImageBitmap(bitmapFromCamera);
-        tvAskUser.setText("Is this " + label + "?");
+        tvAskUser.setText(String.format(getString(R.string.tv_askuser), label));
 
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
