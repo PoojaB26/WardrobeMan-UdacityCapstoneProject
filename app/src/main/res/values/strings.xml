@@ -4,5 +4,17 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="labels_array">
+        <item>flipflops</item>
+        <item>gown</item>
+        <item>kurta</item>
+        <item>polo</item>
+        <item>shirt</item>
+        <item>shoe</item>
+        <item>summerdress</item>
+        <item>top</item>
+        <item>tshirt</item>
+        <item>white_shirt</item>
+    </string-array>
 
 </resources>

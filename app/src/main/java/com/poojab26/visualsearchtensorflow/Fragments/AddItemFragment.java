@@ -8,8 +8,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -29,13 +33,18 @@ public class AddItemFragment extends Fragment {
     Bitmap bitmapFromCamera;
     String label;
 
-    Button btnYes, btnNo;
+    Button btnYes, btnNo, btnUserUpload;
     ImageView imgCamera;
     TextView tvAskUser;
+    LinearLayout mLinearSpinLayout, mLinearAskUser;
+    Spinner spinnerLabels;
+    ProgressBar progressUploadData;
+
 
     DatabaseReference itemsRef;
     StorageReference imageRef;
     String itemId;
+
     public AddItemFragment() {
         // Required empty public constructor
     }
@@ -74,8 +83,30 @@ public class AddItemFragment extends Fragment {
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickYesButton();
+                uploadData();
 
+            }
+        });
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLinearAskUser.setVisibility(View.GONE);
+                mLinearSpinLayout.setVisibility(View.VISIBLE);
+                ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                        R.array.labels_array, android.R.layout.simple_spinner_item);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerLabels.setAdapter(adapter);
+
+
+
+            }
+        });
+        btnUserUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                label = spinnerLabels.getSelectedItem().toString();
+                progressUploadData.setVisibility(View.VISIBLE);
+                uploadData();
             }
         });
 
@@ -86,10 +117,16 @@ public class AddItemFragment extends Fragment {
         tvAskUser = rootview.findViewById(R.id.tvAskUser);
         btnYes = rootview.findViewById(R.id.btnYes);
         btnNo = rootview.findViewById(R.id.btnNo);
+        btnUserUpload = rootview.findViewById(R.id.btnUserUpload);
+        spinnerLabels = rootview.findViewById(R.id.spinLabels);
+        mLinearSpinLayout = rootview.findViewById(R.id.llShowSpinner);
+        mLinearAskUser = rootview.findViewById(R.id.llAskUser);
         imgCamera = rootview.findViewById(R.id.imgCamera);
+        progressUploadData = rootview.findViewById(R.id.progressUserUpload);
+
     }
 
-    public void onClickYesButton(){
+    public void uploadData(){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmapFromCamera.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         final byte[] cameraByteArray = baos.toByteArray();
@@ -107,13 +144,18 @@ public class AddItemFragment extends Fragment {
                 Uri uri = taskSnapshot.getDownloadUrl();
                 Item item = new Item(label, uri.toString());
                 itemsRef.child(itemId).setValue(item);
-                ItemListFragment itemListFragment = new ItemListFragment();
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.activity_main, itemListFragment, null)
-                        .commit();
+                progressUploadData.setVisibility(View.GONE);
+                attachListFragment();
 
             }
         });
+    }
+
+    public void attachListFragment(){
+        ItemListFragment itemListFragment = new ItemListFragment();
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_main, itemListFragment, null)
+                .commit();
     }
 
 }
