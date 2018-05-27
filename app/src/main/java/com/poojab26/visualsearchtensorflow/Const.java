@@ -9,4 +9,5 @@ public class Const {
     public static String DatabaseItemReference = "itemReference";
     public static String CameraBitmap = "bitmap";
     public static String DownloadUrl = "downloadUrl";
+    public static String WidgetLaunch = "widgetLaunch";
 }
