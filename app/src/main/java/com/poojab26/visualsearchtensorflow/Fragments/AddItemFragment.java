@@ -6,9 +6,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.transition.AutoTransition;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.TransitionInflater;
+import android.transition.TransitionSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +39,7 @@ import com.poojab26.visualsearchtensorflow.Const;
 import com.poojab26.visualsearchtensorflow.MainActivity;
 import com.poojab26.visualsearchtensorflow.Model.Item;
 import com.poojab26.visualsearchtensorflow.R;
+import com.poojab26.visualsearchtensorflow.Transitions.CustomTransition;
 import com.poojab26.visualsearchtensorflow.UploadItemWidget;
 
 import java.io.ByteArrayOutputStream;
@@ -167,8 +175,23 @@ public class AddItemFragment extends Fragment {
 
     public void attachListFragment(){
         setupWidget();
+
+        Fade exitFade = new Fade();
+        exitFade.setDuration(5);
+        setExitTransition(exitFade);
+
         ItemListFragment itemListFragment = new ItemListFragment();
-        getActivity().getSupportFragmentManager().beginTransaction()
+
+        TransitionSet enterTransitionSet = new TransitionSet();
+        enterTransitionSet.addTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.move));
+        enterTransitionSet.setDuration(5);
+        enterTransitionSet.setStartDelay(1);
+        itemListFragment.setSharedElementEnterTransition(enterTransitionSet);
+
+
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .addSharedElement(imgCamera, imgCamera.getTransitionName())
                 .replace(R.id.activity_main, itemListFragment, null)
                 .commit();
     }

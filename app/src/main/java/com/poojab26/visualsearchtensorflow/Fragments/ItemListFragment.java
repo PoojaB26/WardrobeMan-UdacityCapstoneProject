@@ -10,7 +10,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,12 +49,6 @@ public class ItemListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-
-    }
 
     public void onCreate(Bundle savedInstanceState) {
 
@@ -65,12 +63,25 @@ public class ItemListFragment extends Fragment {
 
         fabButtonOpenCamera = rootView.findViewById(R.id.btnDetectObject);
         fabButtonOpenCamera.setVisibility(View.VISIBLE);
+        Fade enterFade = new Fade();
+        enterFade.setStartDelay(6);
+        enterFade.setDuration(1);
+        setEnterTransition(enterFade);
+
 
         fabButtonOpenCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CameraFragment cameraFragment = new CameraFragment();
-                getActivity().getSupportFragmentManager().beginTransaction()
+                Slide exitFade = new Slide();
+                exitFade.setDuration(1);
+                exitFade.setSlideEdge(Gravity.START);
+                exitFade.setStartDelay(2);
+
+                cameraFragment.setEnterTransition(exitFade);
+
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
                         .replace(R.id.activity_main, cameraFragment)
                         .commit();
 
