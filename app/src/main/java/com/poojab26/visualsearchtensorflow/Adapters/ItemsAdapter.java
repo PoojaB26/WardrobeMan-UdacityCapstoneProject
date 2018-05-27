@@ -12,6 +12,8 @@ import com.poojab26.visualsearchtensorflow.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by poojab26 on 08-Apr-18.
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
     public ItemsAdapter(ArrayList<Item> items) {
         itemList = items;
+        Collections.reverse(itemList);
     }
 
     private final ArrayList<Item> itemList;
