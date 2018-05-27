@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#09C"
+    android:background="@color/transparent_white"
     android:id="@+id/widget_container"
     android:padding="@dimen/widget_margin">
 
@@ -12,11 +12,21 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_margin="8dp"
-        android:background="#09C"
         android:contentDescription="@string/appwidget_text"
         android:text="@string/appwidget_text"
-        android:textColor="#ffffff"
-        android:textSize="24sp"
-        android:textStyle="bold|italic" />
+        android:textColor="#000"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appwidget_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-8dp"
+        android:contentDescription="@string/appwidget_text"
+        android:text="@string/appwidget_text_click_toupload"
+        android:textColor="#000"
+        android:textSize="14sp" />
 
 </RelativeLayout>

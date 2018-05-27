@@ -21,7 +21,7 @@ public class UploadItemWidget extends AppWidgetProvider {
 
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.upload_item_widget);
-        views.setTextViewText(R.id.appwidget_text, String.valueOf(wardrobeCount));
+        views.setTextViewText(R.id.appwidget_text, "You have " + wardrobeCount + " items in your wardrobe");
 
         Intent configIntent = new Intent(context, MainActivity.class);
         configIntent.putExtra(Const.WidgetLaunch, TRUE);

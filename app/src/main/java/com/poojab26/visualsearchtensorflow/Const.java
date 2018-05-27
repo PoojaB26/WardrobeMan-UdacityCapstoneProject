@@ -10,4 +10,17 @@ public class Const {
     public static String CameraBitmap = "bitmap";
     public static String DownloadUrl = "downloadUrl";
     public static String WidgetLaunch = "widgetLaunch";
+    public static String Preferences = "preferences";
+    public static String PreferencesCount = "preferences_count";
+
+    public static int wardrobeCount = 0;
+    public static void setCount(int count){
+       wardrobeCount = count;
+    }
+
+    public static int getCount(){
+        return wardrobeCount;
+    }
+
+
 }

@@ -1,10 +1,15 @@
 package com.poojab26.visualsearchtensorflow.Fragments;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +29,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.poojab26.visualsearchtensorflow.Const;
+import com.poojab26.visualsearchtensorflow.MainActivity;
 import com.poojab26.visualsearchtensorflow.Model.Item;
 import com.poojab26.visualsearchtensorflow.R;
+import com.poojab26.visualsearchtensorflow.UploadItemWidget;
 
 import java.io.ByteArrayOutputStream;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class AddItemFragment extends Fragment {
     Bitmap bitmapFromCamera;
@@ -145,6 +154,11 @@ public class AddItemFragment extends Fragment {
                 Item item = new Item(label, uri.toString());
                 itemsRef.child(itemId).setValue(item);
                 progressUploadData.setVisibility(View.GONE);
+                Const.setCount(Const.getCount()+1);
+                Log.d("act", "additem " + Const.getCount() );
+                SharedPreferences.Editor editor = getActivity().getSharedPreferences(Const.PreferencesCount, MODE_PRIVATE).edit();
+                editor.putInt(Const.PreferencesCount, Const.getCount());
+                editor.apply();
                 attachListFragment();
 
             }
@@ -152,10 +166,23 @@ public class AddItemFragment extends Fragment {
     }
 
     public void attachListFragment(){
+        setupWidget();
         ItemListFragment itemListFragment = new ItemListFragment();
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.activity_main, itemListFragment, null)
                 .commit();
+    }
+
+    public void setupWidget() {
+        UploadItemWidget.setWardrobeCount(Const.getCount());
+
+        Intent widgetIntent = new Intent(getActivity(), UploadItemWidget.class);
+        widgetIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+
+        int[] ids = AppWidgetManager.getInstance(getActivity().getApplication())
+                .getAppWidgetIds(new ComponentName(getActivity().getApplication(), UploadItemWidget.class));
+        widgetIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        getActivity().sendBroadcast(widgetIntent);
     }
 
 }

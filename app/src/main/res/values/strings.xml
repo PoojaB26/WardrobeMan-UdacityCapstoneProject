@@ -16,7 +16,9 @@
         <item>tshirt</item>
         <item>white_shirt</item>
     </string-array>
-    <string name="appwidget_text">EXAMPLE</string>
+    <string name="appwidget_text">You have 0 items in your closet</string>
+    <string name="appwidget_text_click_toupload">Click to upload more</string>
+
     <string name="add_widget">Add widget</string>
 
 </resources>

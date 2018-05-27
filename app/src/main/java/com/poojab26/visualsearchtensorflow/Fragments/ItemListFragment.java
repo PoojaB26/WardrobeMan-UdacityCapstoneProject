@@ -1,11 +1,16 @@
 package com.poojab26.visualsearchtensorflow.Fragments;
 
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +21,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.poojab26.visualsearchtensorflow.Adapters.ItemsAdapter;
+import com.poojab26.visualsearchtensorflow.Const;
+import com.poojab26.visualsearchtensorflow.MainActivity;
 import com.poojab26.visualsearchtensorflow.Model.Item;
 import com.poojab26.visualsearchtensorflow.R;
+import com.poojab26.visualsearchtensorflow.UploadItemWidget;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +43,13 @@ public class ItemListFragment extends Fragment {
 
     public ItemListFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +82,7 @@ public class ItemListFragment extends Fragment {
         itemsRef = database.getReference("items");
 
         loadItemsImages();
+
         return rootView;
     }
 
@@ -89,8 +105,13 @@ public class ItemListFragment extends Fragment {
                         itemsList.add(item);
                     }
                 }
+                Log.d("act", "ondatachange");
+
 
                 rvItemsList.setAdapter(new ItemsAdapter(itemsList));
+                Const.setCount(itemsList.size());
+
+
             }
 
             @Override
@@ -101,6 +122,9 @@ public class ItemListFragment extends Fragment {
         };
         itemsRef.addValueEventListener(itemDataListener);
     }
+
+
+
 
     @Override
     public void onResume() {
