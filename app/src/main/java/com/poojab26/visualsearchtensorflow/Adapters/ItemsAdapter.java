@@ -1,5 +1,6 @@
 package com.poojab26.visualsearchtensorflow.Adapters;
 
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -40,6 +41,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
 
             holder.bind(position);
 
+
     }
 
     @Override
@@ -57,6 +59,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
         }
 
         public void bind(final int position) {
+                if(position==0){
+                    ViewCompat.setTransitionName(ivItemImage, "cameraImage");
+                }
                 String imgPath = itemList.get(position).getItemDownloadUrl();
                 if (!TextUtils.isEmpty(imgPath)) {
                     Picasso.with(itemView.getContext())
