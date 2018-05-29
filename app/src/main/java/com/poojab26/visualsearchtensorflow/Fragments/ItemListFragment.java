@@ -1,6 +1,7 @@
 package com.poojab26.visualsearchtensorflow.Fragments;
 
 
+import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,11 +16,13 @@ import android.transition.Explode;
 import android.transition.Fade;
 import android.transition.Slide;
 import android.transition.Visibility;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -42,20 +45,35 @@ public class ItemListFragment extends Fragment {
 
     RecyclerView.LayoutManager wardrobeLayoutManager;
     RecyclerView rvItemsList;
-
+    ItemsAdapter itemsAdapter;
     FloatingActionButton fabButtonOpenCamera;
     final ArrayList<Item> itemsList = new ArrayList<Item>();
 
     DatabaseReference itemsRef;
+
+    public Context context;
 
     public ItemListFragment() {
         // Required empty public constructor
     }
 
 
+    private RecyclerViewReadyCallback recyclerViewReadyCallback;
+
+    public interface RecyclerViewReadyCallback {
+        void onLayoutReady();
+    }
+
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        recyclerViewReadyCallback = new RecyclerViewReadyCallback() {
+            @Override
+            public void onLayoutReady() {
+                Const.setCount(itemsAdapter.getItemCount());
+                setupWidget(itemsAdapter.getItemCount());
+            }
+        };
 
     }
 
@@ -66,23 +84,11 @@ public class ItemListFragment extends Fragment {
 
         fabButtonOpenCamera = rootView.findViewById(R.id.btnDetectObject);
         fabButtonOpenCamera.setVisibility(View.VISIBLE);
-        Fade enterFade = new Fade();
-        enterFade.setStartDelay(6);
-        enterFade.setDuration(1);
-        setEnterTransition(enterFade);
-
 
         fabButtonOpenCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CameraFragment cameraFragment = new CameraFragment();
-                Explode exitFade = new Explode();
-                exitFade.setDuration(1000);
-                exitFade.setStartDelay(20);
-                exitFade.setMode(Visibility.MODE_OUT);
-
-                //cameraFragment.setEnterTransition(exitFade);
-
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.slide_left_enter,
@@ -124,15 +130,23 @@ public class ItemListFragment extends Fragment {
                     }
                 }
 
-                ItemsAdapter itemsAdapter = new ItemsAdapter(itemsList);
+                itemsAdapter = new ItemsAdapter(itemsList);
                 rvItemsList.setAdapter(itemsAdapter);
-                Const.setCount(itemsAdapter.getItemCount());
-                setupWidget(itemsAdapter.getItemCount());
+                rvItemsList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (recyclerViewReadyCallback != null) {
+                            recyclerViewReadyCallback.onLayoutReady();
+                        }
+                        rvItemsList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                });
+
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
                 databaseError.toException();
             }
         };
@@ -142,7 +156,7 @@ public class ItemListFragment extends Fragment {
     public void setupWidget(int count) {
         UploadItemWidget.setWardrobeCount(count);
 
-        Intent widgetIntent = new Intent(getActivity(), UploadItemWidget.class);
+        Intent widgetIntent = new Intent(context, UploadItemWidget.class);
         widgetIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 
         int[] ids = AppWidgetManager.getInstance(getActivity().getApplication())
@@ -151,18 +165,10 @@ public class ItemListFragment extends Fragment {
         getActivity().sendBroadcast(widgetIntent);
     }
 
-
-
-
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onAttach(Context context){
+        super.onAttach(context);
+        this.context = context;
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
 
 }
