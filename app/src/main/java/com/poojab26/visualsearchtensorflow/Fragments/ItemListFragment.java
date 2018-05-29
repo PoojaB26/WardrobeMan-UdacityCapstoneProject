@@ -50,6 +50,7 @@ public class ItemListFragment extends Fragment {
     final ArrayList<Item> itemsList = new ArrayList<Item>();
 
     DatabaseReference itemsRef;
+    ValueEventListener itemDataListener;
 
     public Context context;
 
@@ -117,7 +118,7 @@ public class ItemListFragment extends Fragment {
 
     private void loadItemsImages() {
 
-        ValueEventListener itemDataListener = new ValueEventListener() {
+        itemDataListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -171,4 +172,9 @@ public class ItemListFragment extends Fragment {
         this.context = context;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        itemsRef.removeEventListener(itemDataListener);
+    }
 }
