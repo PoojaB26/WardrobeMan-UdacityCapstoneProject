@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".MainActivity"
-            android:label="Visual Search">
+            android:label="Wardrobe Man">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
