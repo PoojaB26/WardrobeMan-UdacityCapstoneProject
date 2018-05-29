@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "656213351929",
+    "firebase_url": "https://udacitycapstoneproject-1ab8c.firebaseio.com",
+    "project_id": "udacitycapstoneproject-1ab8c",
+    "storage_bucket": "udacitycapstoneproject-1ab8c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656213351929:android:6a9f8b41d4ad632b",
+        "android_client_info": {
+          "package_name": "com.poojab26.visualsearchtensorflow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "656213351929-hnik2q7c6joruf68hnh7el0snfog2lk5.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "656213351929-hnik2q7c6joruf68hnh7el0snfog2lk5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByYAfBq8sp70zAo5pg6831KSuxpJbulV4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
