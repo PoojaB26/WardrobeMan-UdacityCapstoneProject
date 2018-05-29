@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -117,10 +118,10 @@ public class ItemListFragment extends Fragment {
                     }
                 }
 
-                rvItemsList.setAdapter(new ItemsAdapter(itemsList));
-                Const.setCount(itemsList.size());
-
-
+                ItemsAdapter itemsAdapter = new ItemsAdapter(itemsList);
+                rvItemsList.setAdapter(itemsAdapter);
+                Const.setCount(itemsAdapter.getItemCount());
+                setupWidget(itemsAdapter.getItemCount());
             }
 
             @Override
@@ -130,6 +131,18 @@ public class ItemListFragment extends Fragment {
             }
         };
         itemsRef.addValueEventListener(itemDataListener);
+    }
+
+    public void setupWidget(int count) {
+        UploadItemWidget.setWardrobeCount(count);
+
+        Intent widgetIntent = new Intent(getActivity(), UploadItemWidget.class);
+        widgetIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+
+        int[] ids = AppWidgetManager.getInstance(getActivity().getApplication())
+                .getAppWidgetIds(new ComponentName(getActivity().getApplication(), UploadItemWidget.class));
+        widgetIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        getActivity().sendBroadcast(widgetIntent);
     }
 
 
