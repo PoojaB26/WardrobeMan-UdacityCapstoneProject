@@ -17,6 +17,7 @@
         android:id="@+id/fabClick"
         android:src="@drawable/ic_camera"
         android:layout_gravity="center|bottom"
+        android:contentDescription="@string/label_takePicture"
         android:layout_margin="16dp"
       />
 

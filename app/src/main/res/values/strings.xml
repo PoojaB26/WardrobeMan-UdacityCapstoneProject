@@ -26,5 +26,14 @@
     <string name="button_upload">UPLOAD</string>
     <string name="button_notreally">NOT REALLY</string>
     <string name="button_yes">YES</string>
+    <string name="label_capturedimage">Displaying camera captured image</string>
+    <string name="label_itemsOption">Asking user to choose the right category for the item</string>
+    <string name="label_uploadData">Upload the image to database with the corrected category</string>
+    <string name="label_askingUser">Asking user if the predicted label is correct or not</string>
+    <string name="label_yes">Proceed</string>
+    <string name="label_no">No, the predicted label is incorrect</string>
+    <string name="label_takePicture">Camera is open so take picture</string>
+    <string name="label_openCamera">Open camera to take picture</string>
+    <string name="label_wardrobeItem">Individual wardrobe item</string>
 
 </resources>

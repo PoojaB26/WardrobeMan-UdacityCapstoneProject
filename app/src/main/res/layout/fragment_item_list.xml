@@ -42,6 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:src="@drawable/ic_camera"
+        android:contentDescription="@string/label_openCamera"
         android:padding="4dp"
         android:layout_margin="16dp" />
 
