@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Explode;
 import android.transition.Fade;
 import android.transition.Slide;
+import android.transition.Visibility;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -74,15 +76,19 @@ public class ItemListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 CameraFragment cameraFragment = new CameraFragment();
-                Slide exitFade = new Slide();
-                exitFade.setDuration(1);
-                exitFade.setSlideEdge(Gravity.START);
-                exitFade.setStartDelay(2);
+                Explode exitFade = new Explode();
+                exitFade.setDuration(1000);
+                exitFade.setStartDelay(20);
+                exitFade.setMode(Visibility.MODE_OUT);
 
-                cameraFragment.setEnterTransition(exitFade);
+                //cameraFragment.setEnterTransition(exitFade);
 
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_left_enter,
+                        R.anim.slide_left_exit,
+                        R.anim.slide_right_enter,
+                        R.anim.slide_right_exit)
                         .replace(R.id.activity_main, cameraFragment)
                         .commit();
 

@@ -176,22 +176,21 @@ public class AddItemFragment extends Fragment {
     public void attachListFragment(){
         setupWidget();
 
-        Fade exitFade = new Fade();
+       /* Fade exitFade = new Fade();
         exitFade.setDuration(5);
         setExitTransition(exitFade);
-
+*/
         ItemListFragment itemListFragment = new ItemListFragment();
 
-        TransitionSet enterTransitionSet = new TransitionSet();
+       /* TransitionSet enterTransitionSet = new TransitionSet();
         enterTransitionSet.addTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.move));
         enterTransitionSet.setDuration(5);
         enterTransitionSet.setStartDelay(1);
         itemListFragment.setSharedElementEnterTransition(enterTransitionSet);
-
+*/
 
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .addSharedElement(imgCamera, imgCamera.getTransitionName())
                 .replace(R.id.activity_main, itemListFragment, null)
                 .commit();
     }

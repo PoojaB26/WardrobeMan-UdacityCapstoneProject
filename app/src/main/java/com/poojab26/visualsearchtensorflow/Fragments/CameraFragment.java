@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.transition.Explode;
+import android.transition.Visibility;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +65,12 @@ public class CameraFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Explode exitFade = new Explode();
+        exitFade.setDuration(1000);
+        exitFade.setStartDelay(20);
+        exitFade.setMode(Visibility.MODE_OUT);
+
+        setEnterTransition(exitFade);
 
     }
 
