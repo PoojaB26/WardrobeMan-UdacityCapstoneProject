@@ -9,8 +9,8 @@ import android.util.Log;
  * Created by poojab26 on 30-May-18.
  */
 public class Utils {
-    static ConnectivityManager connectivityManager;
-    static boolean connected = false;
+    private static ConnectivityManager connectivityManager;
+    private static boolean connected = false;
 
 
     public static boolean isOnline(Context context) {
