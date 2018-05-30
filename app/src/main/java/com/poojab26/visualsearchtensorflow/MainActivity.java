@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -35,39 +36,26 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference itemsRef;
     AdView mAdView;
 
+    Boolean isOnline;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         setContentView(R.layout.activity_main);
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(getTitle());
+
+        new CheckNetworkConnection().execute();
+
+
+    }
+    void setupAd(){
         MobileAds.initialize(this, getString(R.string.admob_id));
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-
-        toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(getTitle());
-
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        itemsRef = database.getReference("items");
-
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            if (extras.get(Const.WidgetLaunch) == TRUE) {
-                CameraFragment cameraFragment = new CameraFragment();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.activity_main, cameraFragment)
-                        .commit();
-            }
-        } else {
-            ItemListFragment itemListFragment = new ItemListFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_main, itemListFragment)
-                    .commit();
-        }
-
     }
 
     @Override
@@ -83,6 +71,42 @@ public class MainActivity extends AppCompatActivity {
         if(prefs.contains(Const.PreferencesCount)) {
             Const.setCount(prefs.getInt(Const.PreferencesCount, 0));
             setupWidget();
+        }
+    }
+
+    private class CheckNetworkConnection extends AsyncTask<Void, Void, Boolean>{
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            isOnline = Utils.isOnline(getApplicationContext());
+            return isOnline;
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if(isOnline){
+                setupAd();
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                itemsRef = database.getReference("items");
+
+                Bundle extras = getIntent().getExtras();
+                if (extras != null) {
+                    if (extras.get(Const.WidgetLaunch) == TRUE) {
+                        CameraFragment cameraFragment = new CameraFragment();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.activity_main, cameraFragment)
+                                .commit();
+                    }
+                } else {
+                    ItemListFragment itemListFragment = new ItemListFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.activity_main, itemListFragment)
+                            .commit();
+                }
+            }else
+                Log.d("CONN", "no connection");
         }
     }
 
